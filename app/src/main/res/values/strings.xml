@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">GpsLocation</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="lati">经度</string>
+    <string name="lng">纬度</string>
+    <string name="search">查询</string>
+</resources>

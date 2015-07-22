@@ -6,4 +6,5 @@
     <string name="lati">经度</string>
     <string name="lng">纬度</string>
     <string name="search">查询</string>
+    <string name="err">暂未收录该地址</string>
 </resources>

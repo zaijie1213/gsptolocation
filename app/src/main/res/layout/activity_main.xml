@@ -10,36 +10,35 @@
 
     <EditText
         android:id="@+id/lat"
-        android:inputType="number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:hint="@string/lati" />
+        android:hint="@string/lati"
+        android:inputType="number" />
     <EditText
-        android:layout_marginTop="50dp"
         android:id="@+id/lng"
-        android:inputType="number"
-        android:layout_below="@+id/lat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/lat"
+        android:layout_marginTop="50dp"
         android:gravity="center"
-        android:hint="@string/lng" />
+        android:hint="@string/lng"
+        android:inputType="number" />
 
     <Button
         android:id="@+id/btn_search"
-        android:layout_marginTop="100dp"
-        android:text="@string/search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/lng"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="@string/search" />
     <TextView
         android:id="@+id/result"
-        android:textSize="20sp"
-        android:gravity="center"
-        android:layout_below="@+id/btn_search"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_height="wrap_content" />
+        android:layout_below="@+id/btn_search"
+        android:gravity="center"
+        android:textSize="20sp" />
 
 </RelativeLayout>

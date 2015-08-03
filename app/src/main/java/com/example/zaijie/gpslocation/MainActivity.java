@@ -62,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
                 String langti = String.valueOf(bdLocation.getLongitude());
                 mLng.setText(langti);
                 mLat.setText(lati);
+
+                Log.d("szg","re");
             }
         });
         LocationClientOption option = new LocationClientOption();
@@ -155,5 +157,6 @@ public class MainActivity extends AppCompatActivity {
         if (!client.isStarted()) {
             client.start();
         }
+            client.requestLocation();
     }
 }

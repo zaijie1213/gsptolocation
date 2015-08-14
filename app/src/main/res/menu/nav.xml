@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/navigation_query"
+        android:icon="@drawable/query"
+        android:title="@string/navigation_query"/>
+    <item
+        android:id="@+id/navigation_history"
+        android:icon="@drawable/his"
+        android:title="@string/navigation_history"/>
+    <item
+        android:id="@+id/navigation_about"
+        android:icon="@drawable/about"
+        android:title="@string/navigation_about"/>
+</menu>

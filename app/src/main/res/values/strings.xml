@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">经纬度查询器</string>
+    <string name="app_name">司南</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -7,4 +7,22 @@
     <string name="lng">纬度</string>
     <string name="search">查询</string>
     <string name="err">暂未收录该地址</string>
+    <string name="title_activity_nav">司南</string>
+
+    <string name="title_section1">经纬度查询</string>
+    <string name="title_section2">查询纪录</string>
+    <string name="title_section3">关于</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="navigation_history">查询历史</string>
+    <string name="navigation_about">关于</string>
+    <string name="navigation_query">查询经纬度</string>
+    <string name="author">作者：左加</string>
+    <string name="conetnt">gps查询小工具</string>
 </resources>

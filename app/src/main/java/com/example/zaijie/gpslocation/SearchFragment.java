@@ -1,12 +1,15 @@
 package com.example.zaijie.gpslocation;
 
+
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,11 +19,10 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.example.zaijie.gpslocation.bean.History;
 import com.thinkland.sdk.android.DataCallBack;
 import com.thinkland.sdk.android.JuheData;
 import com.thinkland.sdk.android.Parameters;
-import com.umeng.analytics.MobclickAgent;
-import com.umeng.update.UmengUpdateAgent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,10 +31,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity {
 
-    public BDLocationListener listener;
-    public LocationClient client;
+public class SearchFragment extends Fragment {
+
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
     @Bind(R.id.lat)
     EditText mLat;
     @Bind(R.id.lng)
@@ -44,17 +47,48 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.getCurLoc)
     Button mGetCurLoc;
 
+    Context context;
+
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
+    private LocationClient client;
+
+
+    public static SearchFragment newInstance(String param1, String param2) {
+        SearchFragment fragment = new SearchFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public SearchFragment() {
+
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-        UmengUpdateAgent.update(this);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+        context=getActivity();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_main, container, false);
+        ButterKnife.bind(this, view);
         initLocation();
+        return view;
     }
 
     private void initLocation() {
-        client = MyApp.getmLocationClient();
+        client = new LocationClient(getActivity());
         client.registerLocationListener(new BDLocationListener() {
             @Override
             public void onReceiveLocation(BDLocation bdLocation) {
@@ -63,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
                 mLng.setText(langti);
                 mLat.setText(lati);
 
-                Log.d("szg","re");
             }
         });
         LocationClientOption option = new LocationClientOption();
@@ -84,51 +117,41 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
 
     @OnClick(R.id.btn_search)
     public void Search() {
         mBtnSearch.setEnabled(false);
         mResult.setText("`");
-        View view = this.getCurrentFocus();
+
+        View view = getActivity().getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
 
-        final ProgressDialog dialog = ProgressDialog.show(this, "查询中", "正在请求数据", false, false);
+        final ProgressDialog dialog = ProgressDialog.show(getActivity(), "查询中", "正在请求数据", false, false);
         dialog.show();
 
-        String lat = mLat.getText().toString();
+        final String lat = mLat.getText().toString();
         String lng = mLng.getText().toString();
         if ((!TextUtils.isEmpty(lat)) && (!TextUtils.isEmpty(lng))) {
             Parameters parameters = new Parameters();
             parameters.add("lat", lat);
             parameters.add("lng", lng);
 
-            JuheData.executeWithAPI(MainActivity.this, 15, "http://apis.juhe.cn/geo/", JuheData.GET, parameters, new DataCallBack() {
+            JuheData.executeWithAPI(getActivity(), 15, "http://apis.juhe.cn/geo/", JuheData.GET, parameters, new DataCallBack() {
                 @Override
                 public void onSuccess(int i, String s) {
                     try {
                         mBtnSearch.setEnabled(true);
                         dialog.dismiss();
-                        Log.d("szg", s);
                         JSONObject object = new JSONObject(s);
                         String addr = object.getJSONObject("result").getString("address");
                         if (TextUtils.isEmpty(addr)) {
                             mResult.setText(R.string.err);
                         } else {
                             mResult.setText(addr);
+                            saveHistory(lat, lat, addr);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -152,11 +175,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void saveHistory(String lat, String lont, String location) {
+        final History bean = new History(lat, lont, location);
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                bean.save();
+            }
+        });
+    }
+
     @OnClick(R.id.getCurLoc)
     public void getCurLoc() {
         if (!client.isStarted()) {
             client.start();
         }
-            client.requestLocation();
+        client.requestLocation();
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 }
